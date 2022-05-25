@@ -12,65 +12,64 @@ filetype plugin on
 "" Load an indent file for the detected file type.
 filetype indent on
 
-"" Show line numbers      
-set number  
+"" Show line numbers
+set number
 
-"" Break lines at word (requires Wrap lines)                                                                               
-" set linebreak   
+"" Break lines at word (requires Wrap lines) 
+" set linebreak
 
-"" Wrap-broken line prefix                                                                                     
-set showbreak=+++                                                                           
-"" Line wrap (number of cols)             
-set textwidth=100                                             
+"" Wrap-broken line prefix
+" set showbreak=+++
+"" Line wrap (number of cols)
+" set textwidth=100
 "" Highlight matching brace
-set showmatch                                                                                        
+set showmatch
 "" Enable spell-checking
-set spell                                                                                        
+set spell
 "" Beep or flash screen on errors
-" set errorbells                                                                                     
-"" Use visual bell (no beeping)    
-set visualbell                                                                                       
+" set errorbells
+"" Use visual bell (no beeping)
+" set visualbell
 
-"" Highlight all search results                                                                                           
-set hlsearch                                                                                      
+"" Highlight all search results
+set hlsearch
 "" Enable smart-case search
-set smartcase                                                                                        
+" set smartcase
 "" Always substitute all matches in a line
-" set gdefault                                                                               
-"" Always case-insensitive         
-set ignorecase                                                                                        
+" set gdefault
+"" Always case-insensitive
+" set ignorecase
 "" Searches for strings incrementally
-set incsearch                                                                                      
-  
-"" Auto-indent new lines                                                                                         
-set autoindent                                                                                        
+" set incsearch
+
+"" Auto-indent new lines
+" set autoindent
 "" Use 'C' style program indenting
-" set cindent                                                                                    
-"" Use spaces instead of tabs    
-" set expandtab                                                                                        
+" set cindent
+"" Use spaces instead of tabs
+" set expandtab
 "" Number of auto-indent spaces
-set shiftwidth=4                                                                                       
-"" Enable smart-indent  
-set smartindent                                                                                       
+" set shiftwidth=4
+"" Enable smart-indent
+" set smartindent
 "" Enable smart-tabs
-set smarttab                                                                                        
+" set smarttab
 "" Number of spaces per Tab
-set softtabstop=4                                                                                        
-                                                                                       
-""" Advanced 
+" set softtabstop=4
 
-"" Prompt confirmation dialogs                                                                                         
-" set confirm                                                                                        
+""" Advanced
+
+"" Prompt confirmation dialogs
+" set confirm
 "" Show row and column ruler information
-set ruler                                                                                       
+set ruler
  
-"" Change working directory to open buffer 
-" set autochdir                                                                                  
-"" Auto-write all file changes      
-" set autowriteall                                                                                       
+"" Change working directory to open buffer
+" set autochdir
+"" Auto-write all file changes
+" set autowriteall
 
-"" Number of undo levels                                                                                         
-set undolevels=1000                                                                                        
+"" Number of undo levels
+set undolevels=1000
 "" Backspace behaviour
-set backspace=indent,eol,start                                                                                     
-  
+" set backspace=indent,eol,start
