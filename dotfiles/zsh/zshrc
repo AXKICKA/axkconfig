@@ -1,0 +1,145 @@
+export PATH="/usr/local/sbin:$PATH"
+export PATH=/Applications/MacVim.app/Contents/bin:$PATH
+
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+## History command configuration
+
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+
+
+## the shell will automatically change directory if cd is not used
+setopt AUTO_CD
+
+## the shell will list the full directory structure
+#setopt AUTOPUSHD
+
+## record timestamp of command in HISTFILE               
+#setopt EXTENDED_HISTORY
+      
+## delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_EXPIRE_DUPS_FIRST 
+
+## ignore duplicated commands history list (may reenable after I have created functions for the most used commands)
+# setopt HIST_IGNORE_DUPS       
+
+## ignore commands that start with space
+setopt HIST_IGNORE_SPACE      
+
+## show command with history expansion to user before running it
+setopt HIST_VERIFY            
+
+## append to history
+setopt APPEND_HISTORY         
+
+## add commands to HISTFILE in order of execution
+setopt INC_APPEND_HISTORY     
+
+## share history across multiple zsh sessions
+setopt SHARE_HISTORY          
+
+## removes blank lines from history
+setopt HIST_REDUCE_BLANKS     
+
+## enables zsh correction
+setopt CORRECT                
+
+## zsh correction
+setopt CORRECT_ALL            
+ 
+
+##  Auto completion for Terraform
+autoload -U +X bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+complete -o nospace -C /usr/local/bin/terraform terraform
+
+
+##  shortcut to keep Homebrew clean
+alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
+
+
+##  shortcut to run VSCode from cli
+alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+
+
+##  shortcut to perform a git pull on the current branch for each repository in the current directory
+#alias multipull="find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;"
+## works like the above alias but added a min and maxdepth to ignore git core dir 
+alias pa="find . -mindepth 2 -maxdepth 2 -name .git -print -execdir git pull \;"
+
+## ls, common usage
+# alias l='ls -lFh'     #size,show type,human readable
+# alias la='ls -lAFh'   #long list,show almost all,show type,human readable
+# alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
+# alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
+# alias ll='ls -l'      #long list
+alias l.='ls -ld .*'
+# alias lS='ls -1FSsh'
+# alias lart='ls -1Fcart'
+# alias lrt='ls -1Fcrt'
+# alias lsr='ls -lARFh' #Recursive list of files and directories
+# alias lsn='ls -1'     #A column contains name of files and directories
+alias lsp='ls -pal'     #long list, show dot files and directories, / indicates directories  
+alias sourz='source $HOME/.zshrc'
+
+## a quick way to get out of current directory
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../..'
+alias tree1='tree -a -L 1'
+alias tree2='tree -a -L 2'
+alias tree3='tree -a -L 3'
+alias vi='mvim -v'
+
+## Colorize the grep command output for ease of use (good for log files)
+alias grep='grep --colour=auto'
+alias egrep='egrep --colour=auto'
+alias fgrep='fgrep --colour=auto'
+
+##  git function shortcut (still testing)
+# function gas() { 
+#    git status ;  git add . -A ; git commit -m "$1" ; git push; 
+#  }
+
+
+##  Custom prompt
+# PS1="%U%F{02}%n@%m%f%u %1~ %# "
+
+# export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
+# export TERM="xterm-256color" CLICOLOR=1
+# export LESS_TERMCAP_mb=$(printf "\e[1;31m")    # blink
+# export LESS_TERMCAP_md=$(printf "\e[1;31m")    # bold
+# export LESS_TERMCAP_me=$(printf "\e[0m")       # end bold, blink and underline 
+# export LESS_TERMCAP_so=$(printf "\e[1;44;33m") # standout (reverse video)
+# export LESS_TERMCAP_se=$(printf "\e[0m")       # end standout
+# export LESS_TERMCAP_us=$(printf "\e[1;32m")    # underline
+# export LESS_TERMCAP_ue=$(printf "\e[0m")       # end underline
+
+
+##  Prompt for Git configuration 
+ function parse_git_branch() {
+     git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/[\1]/p'
+  }
+
+ COLOR_DEF=$'\e[0m'
+ COLOR_USR=$'\e[38;5;243m'
+ COLOR_DIR=$'\e[38;5;197m'
+ COLOR_GIT=$'\e[38;5;39m'
+ setopt PROMPT_SUBST
+ export PROMPT='${COLOR_USR}%n ${COLOR_DIR}%~ ${COLOR_GIT}$(parse_git_branch)${COLOR_DEF} $ '
+
+
+ ##  export AWS_ACCESS_KEY_ID=$(pass aws_access_key_id)
+ ##  export AWS_SECRET_ACCESS_KEY=$(pass aws_secret_access_key)
+ 
+
