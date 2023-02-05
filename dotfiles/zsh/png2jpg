@@ -1,0 +1,29 @@
+#!/usr/bin/env zsh
+# Author: Akil Johnson Jan 17,2023
+
+# Setup the root folder containing the image files
+curdir=$(pwd)
+
+# Create a subfolder to save the converted images to
+mkdir "$curdir/converted"
+# Creates two blank image files to silence errors if file type(s) do not exist; will try to redirect stderr later on
+touch tmpfiletemp.png tmpfiletemp2.PNG
+# Create a log file if needed
+logfile="$curdir/converted/conversion.log"
+
+set -- "$curdir"/*.{png,PNG}
+
+if (($# > 0)); then
+# Iterate through all PNG files in the folder
+	for file; do
+    	# Get the file name without the extension
+   	 	filename=${file:t}
+   	 	filename=${filename%.*}
+   	 	if [[ $file == *.png || $file == *.PNG ]]; then
+    	# Use sips to convert the PNG file to JPEG and save it in the "jpg" folder
+    	sips -s format jpeg "$file" --out "$curdir/converted/$filename.jpg" >> "$logfile" 2>&1 && mv tmpfiletemp*.* ~/.Trash
+    	fi
+	done
+else
+	echo "No png or PNG files found in corrent directory"
+fi
