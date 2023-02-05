@@ -1,0 +1,201 @@
+# Work in progress
+
+
+# Define the function
+function batt_lvl {
+  # Get the battery percentage using pmset, grep, and cut
+  battery_percent=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
+
+  # Set the text color based on the battery percentage
+  if ((battery_percent < 25)); then
+    tput setaf 1  # red
+  elif ((battery_percent < 75)); then
+    tput setaf 3  # yellow
+  else
+    tput setaf 2  # green
+  fi
+
+  # Set the typeface based on the percentage
+  if ((battery_percent < 25)); then
+    echo -e "\e[5m$battery_percent%"  # blink
+  elif ((battery_percent < 75)); then
+    echo -e "\e[1m$battery_percent%"  # bold
+  else
+    echo -e "\e[0m$battery_percent%"  # normal
+  fi
+
+  # Print the battery percentage
+  echo "$battery_percent%"
+
+  # Reset the text color
+  tput sgr0
+}
+
+# Call the function
+batt_lvl
+
+
+===================================================
+
+
+
+
+#!/usr/bin/env zsh
+
+function batt_lvl() {
+  # Get the battery percentage
+  battery_percent=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
+
+  # Set the icon based on the percentage
+  case $battery_percent in
+    0-10) ICON="";;
+    11-20) ICON="";;
+    21-30) ICON="";;
+    31-40) ICON="";;
+    41-50) ICON="";;
+    51-60) ICON="";;
+    61-70) ICON="";;
+    71-80) ICON="";;
+    81-90) ICON="";;
+    91-100) ICON="";;
+esac
+
+  # Print the battery status
+  echo "$icon $battery_percent%"
+}
+
+# Test the function
+batt_lvl
+
+
+
+
+===================================================
+
+#!/usr/bin/env zsh
+
+function battery_status() {
+  # Get the battery percentage
+  battery_percent=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
+
+  # Set the icon based on the percentage
+  if ((battery_percent < 10)); then
+    battery_status="⚡️"
+  elif ((battery_percent < 20)); then
+    battery_status="🔋"
+  elif ((battery_percent < 30)); then
+    battery_status="🔋🔋"
+  elif ((battery_percent < 40)); then
+    battery_status="🔋🔋🔋"
+  elif ((battery_percent < 50)); then
+    battery_status="🔋🔋🔋🔋"
+  elif ((battery_percent < 60)); then
+    battery_status="🔋🔋🔋🔋🔋"
+  elif ((battery_percent < 70)); then
+    battery_status="🔋
+
+===================================================
+
+#!/usr/bin/env zsh
+
+function batt_icon() {
+  # Get the battery percentage
+  battery_percent=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
+
+  # Set the battery icon based on the percentage
+  case "$battery_percent" in
+    10|20|30|40)
+      echo "🔋⚪⚪⚪⚪"
+      ;;
+    20|30|40)
+      echo "🔋🔋⚪⚪⚪"
+      ;;
+    30|40)
+      echo "🔋🔋🔋⚪⚪"
+      ;;
+    40|*)
+      echo "🔋🔋🔋🔋⚪"
+      ;;
+  esac
+}
+
+# Test the function
+batt_icon
+===================================================
+
+# find out the battery percentage
+MFILE="/System/Library/CoreServices/SystemVersion.plist"
+if [[ -f $LFILE ]]; then
+  _battperc=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')
+elif [[ -f $MFILE ]]; then
+  _distro="macos"
+fi
+
+# set an icon based on the percentage
+# make sure your font is compatible with https://github.com/lukas-w/font-logos
+case $_battperc in
+    *0-10*)             ICON="";;
+    *11-20*)            ICON="";;
+    *21-30*)            ICON="";;
+    *31-40*)            ICON="";;
+    *41-50*)            ICON="";;
+    *51-60*)            ICON="";;
+    *61-70*)            ICON="";;
+    *71-80*)            ICON="";;
+    *81-90*)            ICON="";;
+    *91-100*)           ICON="";;
+esac
+
+export STARSHIP_DISTRO="$ICON"
+
+
+
+Batt_10=$'%F{196}'
+Batt_20=$'%F{202}'
+Batt_30=$'%F{208}'
+Batt_40=$'%F{214}'
+Batt_50=$'%F{220}'
+Batt_60=$'%F{226}'
+Batt_70=$'%F{142}'
+Batt_80=$'%F{148}'
+Batt_90=$'%F{154}'
+Batt_100=$'%F{046}'
+
+(pmset -g batt | grep -Eo "\d+%")
+
+for i in range(0, 100):
+##################################################################
+
+#!/bin/sh
+
+BATT="$(pmset -g batt | grep -Eo "\d+%")..."
+
+case "$BATT" in
+   "10%") echo "10"
+   ;;
+   "20%") echo "20"
+   ;;
+   "100%") echo "100"
+   ;;
+esac
+
+
+##################################################################
+
+
+#!/bin/bash
+
+echo -n "What is your test score? "
+read score
+
+case $score in
+    100) echo "A" ;;
+    9[0-9]) echo "A" ;;
+    8[0-9]) echo "B" ;;
+    7[0-9]) echo "C" ;;
+    6[0-9]) echo "D" ;;
+    *) echo "F" ;;
+esac
+
+##################################################################
+
