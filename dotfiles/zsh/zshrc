@@ -1,145 +1,193 @@
-export PATH="/usr/local/sbin:$PATH"
-export PATH=/Applications/MacVim.app/Contents/bin:$PATH
-
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
-
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-## History command configuration
-
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=10000
+############################################################################################
+source ~/.zsh_aliases
+#			simple convenience functions file
 
 
-## the shell will automatically change directory if cd is not used
-setopt AUTO_CD
 
-## the shell will list the full directory structure
-#setopt AUTOPUSHD
-
-## record timestamp of command in HISTFILE               
-#setopt EXTENDED_HISTORY
-      
-## delete duplicates first when HISTFILE size exceeds HISTSIZE
-setopt HIST_EXPIRE_DUPS_FIRST 
-
-## ignore duplicated commands history list (may reenable after I have created functions for the most used commands)
-# setopt HIST_IGNORE_DUPS       
-
-## ignore commands that start with space
-setopt HIST_IGNORE_SPACE      
-
-## show command with history expansion to user before running it
-setopt HIST_VERIFY            
-
-## append to history
-setopt APPEND_HISTORY         
-
-## add commands to HISTFILE in order of execution
-setopt INC_APPEND_HISTORY     
-
-## share history across multiple zsh sessions
-setopt SHARE_HISTORY          
-
-## removes blank lines from history
-setopt HIST_REDUCE_BLANKS     
-
-## enables zsh correction
-setopt CORRECT                
-
-## zsh correction
-setopt CORRECT_ALL            
- 
-
-##  Auto completion for Terraform
+source ~/.zsh_functions
 autoload -U +X bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
+source <(kubectl completion zsh)
+autoload -Uz zmv
+#			load version control information (vcs_config)
+autoload -Uz vcs_info
+precmd() {
+	vcs_info
+}
+autoload -Uz colors && colors
+zmodload zsh/terminfo
+zmodload zsh/nearcolor
+zmodload -i zsh/complist
+zmodload zsh/zle
+
+
+
+#			custom advanced functions to autoload
+fpath=(~/.zshfunc "${fpath[@]}")
+autoload -Uz $fpath[1]/*(.:t)
+
+
+function bottom_prompt {
+  # Move the cursor to the bottom of the terminal window
+  tput cud $((${LINES} - 1))
+  # Save the current position
+  tput sc
+
+  # Display the prompt
+  zle && zle reset-prompt
+  zle -R
+  # Restore the saved position
+  tput rc
+}
+
+
+
+#			Cache completion if nothing changed - faster startup time
+typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+if [ $(date +'%j') != $updated_at ]; then
+  compinit -i
+else
+  compinit -C -i
+fi
+############################################################################################
+export PATH=$PATH:~/Scripts
+export PATH="/usr/local/sbin:$PATH"
+#			set default Docker daemon socket from "unix:///var/run/docker.sock to Colima's location
+export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+#			virtualenvwrapper things
+export WORKON_HOME=~/.virtualenvs
+export PROJECT_HOME=~/Devel
+export EDITOR="/usr/local/bin/bbedit -w --resume"
+#source $HOME/.pyenv/versions/$($VIRTUALENVWRAPPER_PYTHON -V 2>&1 | grep -Po '(?<=Python )(.+)')/bin/virtualenvwrapper.sh
+#
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+#
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#
+############################################################################################
+#			the shell will automatically change directory if cd is not used
+setopt AUTO_CD
+#			record timestamp of command in HISTFILE
+setopt EXTENDED_HISTORY
+#			delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_EXPIRE_DUPS_FIRST
+#			ignore duplicated commands history list (may reenable after I have created functions for the most used commands)
+setopt HIST_IGNORE_DUPS
+#			ignore commands that start with space
+setopt HIST_IGNORE_SPACE
+#			show command with history expansion to user before running it
+setopt HIST_VERIFY
+#			append to history
+setopt APPEND_HISTORY
+#			add commands to HISTFILE in order of execution
+setopt INC_APPEND_HISTORY
+#			share history across multiple zsh sessions
+setopt SHARE_HISTORY
+#			removes blank lines from history
+setopt HIST_REDUCE_BLANKS
+#			zsh correction, correct corrects only commands
+setopt CORRECT
+#			zsh correct_all, corrects commands and arguments
+unsetopt CORRECT_ALL
+#			automatically list choices on ambiguous completion
+setopt AUTO_LIST
+#			automatically use menu completion
+setopt AUTO_MENU
+#			move cursor to end if word had one match
+setopt ALWAYS_TO_END
+#			do not display duplicates when searching history
+setopt HIST_FIND_NO_DUPS
+#			enables parameter expansion, command substitution
+setopt PROMPT_SUBST
+#			glob
+setopt EXTENDED_GLOB
+############################################################################################
+#			make the list prompt friendly
+zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
+#			select completions with arrow keys
+zstyle ':completion:*' menu select
+#			group results by category
+zstyle ':completion:*' group-name ''
+#			keep directories and files separated
+zstyle ':completion:*' list-dirs-first true
+#			always use menu selection for `cd -`
+zstyle ':completion:*:*:cd:*:directory-stack' force-list always
+zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
+#			enable approximate matches for completion
+zstyle ':completion:::::' completer _expand _complete _ignored _approximate
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3)) numeric)'
+#			format the vcs_info_msg_0_ variable (vcs_config)
+zstyle ':vcs_info:*' enable git svn
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' formats ' on  %F{6}[%F{3}%b%F{6}] %F{15}'
+	if [[ "${vcs_info_msg_0_}" == "master" || "${vcs_info_msg_0_}" == "main" ]]; then
+	vcs_info_msg_0_="%F{2}${vcs_info_msg_0_}"
+	fi
+zstyle ':vcs_info:git*' actionformats "%F{3}%b%f %F{5}•%a%f  %m%u%c"
+#			enable vcs_info hook processing debug information. true/false
+zstyle ':vcs_info:*+*:*' debug false
+############################################################################################
+#			move prompt to the bottom
+# printf '\n%.0s' {1..100}
+#			prompt customizations use %f to reset at the of the custom prompt
+BRKT1=$'%F{5}'
+BRKT2=$'%F{6}'
+CSYM=$'%F{2}'
+CBATT=$'%F{5}'
+CHOST=$'%F{6}%m'
+CUSR=$'%F{6}%n'
+CDIR=$'%F{2}%~'
+CGIT=$'%F{6}'
+CTIME=$'%F{6}[%F{2}%T%F{6}]'
+PS1='$(bottom_prompt)${BRKT1}╭ ${BRKT2}[$(batt_mtr_v2)${BRKT2}]${CTIME} ${CUSR}${CSYM}@${CHOST} ${CDIR}${CGIT}${vcs_info_msg_0_}
+${BRKT1}╰╴▷  %f'
+#PS2='(more) '
+#RPROMPT='${CGIT}${vcs_info_msg_0_:- }'
+#RPROMPT='$(weather)'
+
+############################################################################################
+#			some commands and options don't work right with this config
+#PS1='${BRKT1}╭ $(bottom_prompt)${CTIME}  $(batt)%]
+#${BRKT1}╰╴▷ ${CHOST}%m ${CDIR}${CGIT}${vcs_info_msg_0_} %F{normal} %f'
+############################################################################################
+#			prompt does not return to the beginning after clearing line
+#PS1='$(bottom_prompt)${CHOST}%m [ $(batt)%] ${CDIR}%~${CGIT}${vcs_info_msg_0_} %F{normal}'
+
+
+############################################################################################
+#			Hashicorp command completions
+#			>>>>  Vagrant command completion (start)
+fpath=(/opt/vagrant/embedded/gems/2.3.4/gems/vagrant-2.3.4/contrib/zsh $fpath)
+compinit
+#			<<<<  Vagrant command completion (end)
 complete -o nospace -C /usr/local/bin/terraform terraform
+############################################################################################
+
+# remove duplicate entries from $PATH and $FPATH...keep at bottom of .zshrc
+typeset -U PATH
+typeset -U FPATH
 
 
-##  shortcut to keep Homebrew clean
-alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 
 
-##  shortcut to run VSCode from cli
-alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
-
-##  shortcut to perform a git pull on the current branch for each repository in the current directory
-#alias multipull="find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;"
-## works like the above alias but added a min and maxdepth to ignore git core dir 
-alias pa="find . -mindepth 2 -maxdepth 2 -name .git -print -execdir git pull \;"
-
-## ls, common usage
-# alias l='ls -lFh'     #size,show type,human readable
-# alias la='ls -lAFh'   #long list,show almost all,show type,human readable
-# alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
-# alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
-# alias ll='ls -l'      #long list
-alias l.='ls -ld .*'
-# alias lS='ls -1FSsh'
-# alias lart='ls -1Fcart'
-# alias lrt='ls -1Fcrt'
-# alias lsr='ls -lARFh' #Recursive list of files and directories
-# alias lsn='ls -1'     #A column contains name of files and directories
-alias lsp='ls -pal'     #long list, show dot files and directories, / indicates directories  
-alias sourz='source $HOME/.zshrc'
-
-## a quick way to get out of current directory
-alias ..='cd ..'
-alias ...='cd ../../../'
-alias ....='cd ../../../../'
-alias .....='cd ../../../../'
-alias .4='cd ../../../../'
-alias .5='cd ../../../../..'
-alias tree1='tree -a -L 1'
-alias tree2='tree -a -L 2'
-alias tree3='tree -a -L 3'
-alias vi='mvim -v'
-
-## Colorize the grep command output for ease of use (good for log files)
-alias grep='grep --colour=auto'
-alias egrep='egrep --colour=auto'
-alias fgrep='fgrep --colour=auto'
-
-##  git function shortcut (still testing)
-# function gas() { 
-#    git status ;  git add . -A ; git commit -m "$1" ; git push; 
-#  }
-
-
-##  Custom prompt
-# PS1="%U%F{02}%n@%m%f%u %1~ %# "
-
-# export LSCOLORS=gxfxbEaEBxxEhEhBaDaCaD
-# export TERM="xterm-256color" CLICOLOR=1
-# export LESS_TERMCAP_mb=$(printf "\e[1;31m")    # blink
-# export LESS_TERMCAP_md=$(printf "\e[1;31m")    # bold
-# export LESS_TERMCAP_me=$(printf "\e[0m")       # end bold, blink and underline 
-# export LESS_TERMCAP_so=$(printf "\e[1;44;33m") # standout (reverse video)
-# export LESS_TERMCAP_se=$(printf "\e[0m")       # end standout
-# export LESS_TERMCAP_us=$(printf "\e[1;32m")    # underline
-# export LESS_TERMCAP_ue=$(printf "\e[0m")       # end underline
-
-
-##  Prompt for Git configuration 
- function parse_git_branch() {
-     git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/[\1]/p'
-  }
-
- COLOR_DEF=$'\e[0m'
- COLOR_USR=$'\e[38;5;243m'
- COLOR_DIR=$'\e[38;5;197m'
- COLOR_GIT=$'\e[38;5;39m'
- setopt PROMPT_SUBST
- export PROMPT='${COLOR_USR}%n ${COLOR_DIR}%~ ${COLOR_GIT}$(parse_git_branch)${COLOR_DEF} $ '
-
-
- ##  export AWS_ACCESS_KEY_ID=$(pass aws_access_key_id)
- ##  export AWS_SECRET_ACCESS_KEY=$(pass aws_secret_access_key)
- 
-
+############################################################################################
+############################################################################################
+#			test prompt configurations
+#PS1='%(?.%F{green}√.%F{red}?%?)%f %B%F{240}%1~%f%b %# '
+#BATT=$[ $(pmset -g batt | grep -Eo "\d+%")%]
+#PS1='${CHOST}%m [ $(pmset -g batt | grep -Eo "\d+%")%] ${CDIR}%~${CGIT}${vcs_info_msg_0_} %F{normal}'
+#zstyle ':vcs_info:git*' formats '  %r/%S %b (%a) %m%u%c '
+#PS1='%{%F{243}%}%n in %{%F{5}%}${PWD/#$HOME/~}%{%F{39}%}${vcs_info_msg_0_} %{%F{normal}%}'
+#PS1='%{%F{243}%}%n in %{%F{5}%}%2~ $%{%F{39}%}${vcs_info_msg_0_} %{%F{normal}%}>%{%f%} '
+#			Set up the prompt (with git branch name) (vcs_config)
+#PROMPT='%n in ${PWD/#$HOME/~} ${vcs_info_msg_0_} '
+#PS1="%U%F{02}%n@%m%f%u %1~ %# "
+############################################################################################
+############################################################################################
+#export EDITOR="/usr/local/bin/mate -w"
