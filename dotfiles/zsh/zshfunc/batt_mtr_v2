@@ -1,0 +1,46 @@
+#!/usr/bin/env zsh
+# Akil Johnson 12/22/2022
+# Requires a Nerd Font, used JetBrains Mono
+
+function batt_mtr2() {
+  # Get the battery percentage
+  battery_percent=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
+
+  # Set the battery icon based on the percentage
+  if [[ "$battery_percent" -le 10 ]]; then
+    icon=""
+    color="\e[38;5;5m" # Red
+  elif [[ "$battery_percent" -le 20 ]]; then
+    icon=""
+    color="\e[38;5;5m" # Red
+  elif [[ "$battery_percent" -le 30 ]]; then
+    icon=""
+    color="\e[38;5;209m" # LtRed
+  elif [[ "$battery_percent" -le 40 ]]; then
+    icon=""
+    color="\e[38;5;209m" # Lt?Red
+  elif [[ "$battery_percent" -le 50 ]]; then
+    icon=""
+    color="\e[38;5;227m" # Yellow
+  elif [[ "$battery_percent" -le 60 ]]; then
+    icon=""
+    color="\e[38;5;227m" # Yellow
+  elif [[ "$battery_percent" -le 70 ]]; then
+    icon=""
+    color="\e[38;5;227m" # Yellow
+  elif [[ "$battery_percent" -le 80 ]]; then
+    icon=""
+    color="\e[38;5;2m" # Green
+  elif [[ "$battery_percent" -le 90 ]]; then
+    icon=""
+    color="\e[38;5;2m" # Green
+  else
+    icon=""
+    color="\e[38;5;2m" # Green
+  fi
+
+  echo "${color}$icon $battery_percent%%"
+}
+
+# Test the function
+batt_mtr2
