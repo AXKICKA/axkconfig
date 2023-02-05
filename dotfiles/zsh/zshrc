@@ -125,15 +125,7 @@ zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX
 zstyle ':vcs_info:*' enable git svn
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' formats ' on  %F{6}[%F{3}%b%F{6}] %F{15}'
-	if [[ "${vcs_info_msg_0_}" == "master" || "${vcs_info_msg_0_}" == "main" ]]; then
-	vcs_info_msg_0_="%F{2}${vcs_info_msg_0_}"
-	fi
-zstyle ':vcs_info:git*' actionformats "%F{3}%b%f %F{5}•%a%f  %m%u%c"
-#			enable vcs_info hook processing debug information. true/false
-zstyle ':vcs_info:*+*:*' debug false
 ############################################################################################
-#			move prompt to the bottom
-# printf '\n%.0s' {1..100}
 #			prompt customizations use %f to reset at the of the custom prompt
 BRKT1=$'%F{5}'
 BRKT2=$'%F{6}'
@@ -151,15 +143,6 @@ ${BRKT1}╰╴▷  %f'
 #RPROMPT='$(weather)'
 
 ############################################################################################
-#			some commands and options don't work right with this config
-#PS1='${BRKT1}╭ $(bottom_prompt)${CTIME}  $(batt)%]
-#${BRKT1}╰╴▷ ${CHOST}%m ${CDIR}${CGIT}${vcs_info_msg_0_} %F{normal} %f'
-############################################################################################
-#			prompt does not return to the beginning after clearing line
-#PS1='$(bottom_prompt)${CHOST}%m [ $(batt)%] ${CDIR}%~${CGIT}${vcs_info_msg_0_} %F{normal}'
-
-
-############################################################################################
 #			Hashicorp command completions
 #			>>>>  Vagrant command completion (start)
 fpath=(/opt/vagrant/embedded/gems/2.3.4/gems/vagrant-2.3.4/contrib/zsh $fpath)
@@ -171,23 +154,4 @@ complete -o nospace -C /usr/local/bin/terraform terraform
 # remove duplicate entries from $PATH and $FPATH...keep at bottom of .zshrc
 typeset -U PATH
 typeset -U FPATH
-
-
-
-
-
 ############################################################################################
-############################################################################################
-#			test prompt configurations
-#PS1='%(?.%F{green}√.%F{red}?%?)%f %B%F{240}%1~%f%b %# '
-#BATT=$[ $(pmset -g batt | grep -Eo "\d+%")%]
-#PS1='${CHOST}%m [ $(pmset -g batt | grep -Eo "\d+%")%] ${CDIR}%~${CGIT}${vcs_info_msg_0_} %F{normal}'
-#zstyle ':vcs_info:git*' formats '  %r/%S %b (%a) %m%u%c '
-#PS1='%{%F{243}%}%n in %{%F{5}%}${PWD/#$HOME/~}%{%F{39}%}${vcs_info_msg_0_} %{%F{normal}%}'
-#PS1='%{%F{243}%}%n in %{%F{5}%}%2~ $%{%F{39}%}${vcs_info_msg_0_} %{%F{normal}%}>%{%f%} '
-#			Set up the prompt (with git branch name) (vcs_config)
-#PROMPT='%n in ${PWD/#$HOME/~} ${vcs_info_msg_0_} '
-#PS1="%U%F{02}%n@%m%f%u %1~ %# "
-############################################################################################
-############################################################################################
-#export EDITOR="/usr/local/bin/mate -w"
