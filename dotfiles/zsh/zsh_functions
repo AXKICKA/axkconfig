@@ -1,4 +1,4 @@
-#			Example for a builtin command      #
+#           Example for a builtin command      #
 # cd()                                         #
 # {                                            #
 #     builtin cd $@ ;                          #
@@ -60,7 +60,7 @@ function zmvSp() {
 function zmvDot () {
 	zmv '(*.*)(.*)' '${1//./ }$2'
 }
-#			Remove "SOAP2DAY - "from the beginning of file name
+#			Remove "What ever text- "from the beginning of file name
 function zmvR () {
 	zmv 'ChangeMe - (*)' '$1'
 }
