@@ -1,0 +1,164 @@
+#			Example for a builtin command      #
+# cd()                                         #
+# {                                            #
+#     builtin cd $@ ;                          #
+#     ls ;                                     #
+# }                                            #
+################################################
+# "$@" allows for two separate directories
+
+function srz() {
+	source ~/.zshrc ;
+
+}
+#			Use for committing often
+function gacs() {
+	git add .
+	git commit -m "$1"
+	git status
+}
+#			Best use for incremental or final push at the end of session
+function gacp() {
+	git add .
+	git commit -m "$1"
+	git push
+}
+
+function gl() {
+	git log --oneline --decorate --graph ;
+}
+
+function gla() {
+	git log --oneline --decorate --graph --all ;
+}
+
+function glp() {
+	git log --pretty=oneline
+}
+
+#			Add current date to file name
+function add-date {
+	mv $1 "$(date +%Y%m%d_%H%M%S)_$1"
+  }
+#			Capitalize each word of file name in a directory
+function zmvC() {
+	zmv '(*).(*)' '${(C)1}.$2' ;
+}
+#			Change the extension to lower case
+function zmvExtL() {
+	zmv '(*).(*)' '$1.${(L)match[2]}' ;
+}
+#			Changes all filenames to lowercase in a directory
+function zmvL() {
+	zmv '(*).(*)' '${(L)1}.$2' ;
+}
+#			Change "-" to spaces filenames
+function zmvSp() {
+	zmv '*-*' '$f:gs/-/ '
+}
+#			Change . to spaces except the last one
+function zmvDot () {
+	zmv '(*.*)(.*)' '${1//./ }$2'
+}
+#			Remove "SOAP2DAY - "from the beginning of file name
+function zmvR () {
+	zmv 'ChangeMe - (*)' '$1'
+}
+#			Remove space before the extension
+function zmvEndSp() {
+	zmv '(*) (.*)' '${1}${2}'
+}
+#			Remove from start of filename
+function zmvFront () {
+	repl="$1"
+#	echo "Enter beginning of filename to replace: "
+#	read repl
+	zmv "$repl (*)" '$1'
+}
+#			Remove from end of filename
+function zmvEnd () {
+	repl="$1"
+#	echo "Enter end of filename to replace: "
+#	read repl
+	zmv "(*) $repl" '$1'
+}
+#			Remove {x} trailing digits before extension
+function zmvTdigit () {
+	zmv -n "(*) [0-9](#c8)(*)" '$1$2'
+}
+#			open man pages in Preview
+function preman() {
+	man -t "$@" | open -f -a "Preview" ;
+}
+function bbman () {
+	MANWIDTH=80 MANPAGER='col -bx' man "$@" | bbedit --clean --view-top -t "man $@" ;
+}
+function xmanpage() {
+	open x-man-page://$@ ;
+}
+function vnc() {
+    open vnc://"$USER"@"$1" ;
+}
+function obsav() {
+	afplay /System/Library/Sounds/Hero.aiff ;
+}
+# Colormap
+function colormap() {
+	for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
+}
+
+function cdl() {
+	cd "$1" && exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -al ;
+}
+
+function cdt1() {
+	cd "$1" && exa -T --level=1 ;
+}
+
+function cdt2() {
+	cd "$1" && exa -T --level=2 ;
+}
+
+function cdt3() {
+	cd "$1" && exa -T --level=3 ;
+}
+
+function lsa() {
+	ls -al "$@" ;
+}
+
+function ll() {
+	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fla "$@" ;
+}
+
+function lf() {
+	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fl "$@" ;
+}
+
+function l.() {
+	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fd .* "$@" ;
+}
+
+function del() {
+	mv "$@" ~/.Trash
+}
+
+function batt() {
+	pmset -g batt | grep -Eo "\d+%" ;
+}
+
+function pa() {
+	find . -mindepth 2 -maxdepth 2 -name .git -print -execdir git pull \;
+}
+
+function weather () {
+	curl -s "v2.wttr.in/rdu?format=1"
+}
+
+function flushdns () {
+	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder ;
+}
+
+function restart () {
+	shutdown -hr now
+}
