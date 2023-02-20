@@ -1,4 +1,4 @@
-#           Example for a builtin command      #
+#			Example for a builtin command      #
 # cd()                                         #
 # {                                            #
 #     builtin cd $@ ;                          #
@@ -37,60 +37,60 @@ function glp() {
 }
 
 #			Add current date to file name
-function add-date {
+function add-date() {
 	mv $1 "$(date +%Y%m%d_%H%M%S)_$1"
   }
 #			Capitalize each word of file name in a directory
 function zmvC() {
-	zmv '(*).(*)' '${(C)1}.$2' ;
+	zmv "$@" '(*).(*)' '${(C)1}.$2' ;
 }
 #			Change the extension to lower case
 function zmvExtL() {
-	zmv '(*).(*)' '$1.${(L)match[2]}' ;
+	zmv "$@" '(*).(*)' '$1.${(L)match[2]}' ;
 }
 #			Changes all filenames to lowercase in a directory
 function zmvL() {
-	zmv '(*).(*)' '${(L)1}.$2' ;
+	zmv "$@" '(*).(*)' '${(L)1}.$2' ;
 }
 #			Change "-" to spaces filenames
 function zmvSp() {
-	zmv '*-*' '$f:gs/-/ '
+	zmv "$@" '*-*' '$f:gs/-/ '
 }
 #			Change . to spaces except the last one
-function zmvDot () {
-	zmv '(*.*)(.*)' '${1//./ }$2'
+function zmvDot() {
+	zmv "$@" '(*.*)(.*)' '${1//./ }$2'
 }
-#			Remove "What ever text- "from the beginning of file name
-function zmvR () {
-	zmv 'ChangeMe - (*)' '$1'
+#			Remove "What ever text - "from the beginning of file name
+function zmvR() {
+	zmv "$@" 'ChangeMe - (*)' '$1'
 }
 #			Remove space before the extension
 function zmvEndSp() {
-	zmv '(*) (.*)' '${1}${2}'
+	zmv "$@" '(*) (.*)' '${1}${2}'
 }
 #			Remove from start of filename
-function zmvFront () {
+function zmvFront() {
 	repl="$1"
 #	echo "Enter beginning of filename to replace: "
 #	read repl
-	zmv "$repl (*)" '$1'
+	zmv "$@" "$repl (*)" '$1'
 }
 #			Remove from end of filename
-function zmvEnd () {
+function zmvEnd() {
 	repl="$1"
 #	echo "Enter end of filename to replace: "
 #	read repl
-	zmv "(*) $repl" '$1'
+	zmv "$@" "(*) $repl" '$1'
 }
 #			Remove {x} trailing digits before extension
-function zmvTdigit () {
-	zmv -n "(*) [0-9](#c8)(*)" '$1$2'
+function zmvTdigit() {
+	zmv "$@" "(*) [0-9](#c8)(*)" '$1$2'
 }
 #			open man pages in Preview
 function preman() {
 	man -t "$@" | open -f -a "Preview" ;
 }
-function bbman () {
+function bbman() {
 	MANWIDTH=80 MANPAGER='col -bx' man "$@" | bbedit --clean --view-top -t "man $@" ;
 }
 function xmanpage() {
@@ -151,14 +151,14 @@ function pa() {
 	find . -mindepth 2 -maxdepth 2 -name .git -print -execdir git pull \;
 }
 
-function weather () {
+function weather() {
 	curl -s "v2.wttr.in/rdu?format=1"
 }
 
-function flushdns () {
+function flushdns() {
 	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder ;
 }
 
-function restart () {
+function restart() {
 	shutdown -hr now
 }
