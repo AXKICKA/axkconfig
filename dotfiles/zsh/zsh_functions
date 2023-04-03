@@ -1,14 +1,62 @@
-#           Example for a builtin command      #
+#			Example for a builtin command      #
 # cd()                                         #
 # {                                            #
-#     builtin cd $@ ;                          #
-#     ls ;                                     #
+#     builtin cd $@;                           #
+#     ls;                                      #
 # }                                            #
 ################################################
-# "$@" allows for two separate directories
+# "$@" allows for two separate arguments
 
-function srz() {
-	source ~/.zshrc ;
+#	Moves the prompt to the bottom of the terminal window
+function bottom_prompt {
+  # Move the cursor to the bottom of the terminal window
+#   tput cud $((${LINES} - 1))
+  tput cup $((${LINES}-1)) 0
+  # Save the current position
+  tput sc
+  # Clear the line
+  tput el
+  # Display the prompt
+  zle && zle reset-prompt
+  zle -R
+  # Restore the saved position
+  tput rc
+}
+
+function la() {
+	gls --color=auto -AlpFN "$@";
+}
+
+function wget() {
+	wget --no-check-certificate "$@";
+}
+
+function t() {
+	tmux "$@";
+}
+
+function grep() {
+	command grep --color=auto "$@";
+}
+
+function egrep() {
+	command egrep --color=auto "$@";
+}
+
+function fgrep() {
+	command fgrep --color=auto "$@";
+}
+
+function k() {
+	kubectl "$@";
+}
+
+function h() {
+	helm "$@";
+}
+
+function s() {
+	source ~/.zshrc;
 
 }
 #			Use for committing often
@@ -25,140 +73,152 @@ function gacp() {
 }
 
 function gl() {
-	git log --oneline --decorate --graph ;
+	git log --oneline --decorate --graph;
 }
 
 function gla() {
-	git log --oneline --decorate --graph --all ;
+	git log --oneline --decorate --graph --all;
 }
 
 function glp() {
 	git log --pretty=oneline
 }
 
+function cd() {
+	builtin cd "$@";
+	la;
+}
 #			Add current date to file name
-function add-date {
+function add-date() {
 	mv $1 "$(date +%Y%m%d_%H%M%S)_$1"
   }
 #			Capitalize each word of file name in a directory
 function zmvC() {
-	zmv '(*).(*)' '${(C)1}.$2' ;
+	zmv "$@" '(*).(*)' '${(C)1}.$2';
 }
 #			Change the extension to lower case
 function zmvExtL() {
-	zmv '(*).(*)' '$1.${(L)match[2]}' ;
+	zmv "$@" '(*).(*)' '$1.${(L)match[2]}';
 }
 #			Changes all filenames to lowercase in a directory
 function zmvL() {
-	zmv '(*).(*)' '${(L)1}.$2' ;
+	zmv "$@" '(*).(*)' '${(L)1}.$2';
 }
 #			Change "-" to spaces filenames
 function zmvSp() {
-	zmv '*-*' '$f:gs/-/ '
+	zmv "$@" '*-*' '$f:gs/-/ '
 }
 #			Change . to spaces except the last one
-function zmvDot () {
-	zmv '(*.*)(.*)' '${1//./ }$2'
+function zmvDot() {
+	zmv "$@" '(*.*)(.*)' '${1//./ }$2'
 }
-#			Remove "What ever text- "from the beginning of file name
-function zmvR () {
-	zmv 'ChangeMe - (*)' '$1'
+#			Remove "What ever text - "from the beginning of file name
+function zmvR() {
+	zmv "$@" 'ChangeMe - (*)' '$1'
 }
 #			Remove space before the extension
 function zmvEndSp() {
-	zmv '(*) (.*)' '${1}${2}'
+	zmv "$@" '(*) (.*)' '${1}${2}'
 }
 #			Remove from start of filename
-function zmvFront () {
+function zmvFront() {
 	repl="$1"
-#	echo "Enter beginning of filename to replace: "
-#	read repl
-	zmv "$repl (*)" '$1'
+#			echo "Enter beginning of filename to replace: "
+#			read repl
+	zmv "$@" "$repl (*)" '$1$2'
 }
 #			Remove from end of filename
-function zmvEnd () {
+function zmvEnd() {
 	repl="$1"
-#	echo "Enter end of filename to replace: "
-#	read repl
-	zmv "(*) $repl" '$1'
+#			echo "Enter end of filename to replace: "
+#			read repl
+	zmv "$@" "(*) $repl" '$1'
 }
 #			Remove {x} trailing digits before extension
-function zmvTdigit () {
-	zmv -n "(*) [0-9](#c8)(*)" '$1$2'
+function zmvTdigit() {
+	zmv "$@" "(*) [0-9](#c8)(*)" '$1$2'
+}
+
+function remove_digits() {
+	local digits="$1"
+	shift
+	zmv "$@" "\$1${(l:-$digits::)1}"
+}
+# 			Renames mp3 or m4a file/s in the current folders to the "Title" that is specified in the metadata via exiftool.
+function zmvMp3Meta() {
+ 	zmv "$@" '(*).(mp3|m4a)' '$1${${(f)"$(exiftool -S -s -Title $2.$3)"}//[:\/]/_}.$3'
+# 	zmv "$@" '(**/)(*).(mp3|m4a)' '$1${${(f)"$(exiftool -S -s -Title $2.$3)"}//[:\/]/_}.$3'
+
 }
 #			open man pages in Preview
 function preman() {
-	man -t "$@" | open -f -a "Preview" ;
+	man -t "$@" | open -f -a "Preview";
 }
-function bbman () {
-	MANWIDTH=80 MANPAGER='col -bx' man "$@" | bbedit --clean --view-top -t "man $@" ;
+function bbman() {
+	MANWIDTH=80 MANPAGER='col -bx' man "$@" | bbedit --clean --view-top -t "man $@";
 }
 function xmanpage() {
-	open x-man-page://$@ ;
+	open x-man-page://$@;
 }
 function vnc() {
-    open vnc://"$USER"@"$1" ;
+    open vnc://"$USER"@"$1";
 }
 function obsav() {
-	afplay /System/Library/Sounds/Hero.aiff ;
+	afplay /System/Library/Sounds/Hero.aiff;
 }
-# Colormap
+#			Colormap
 function colormap() {
 	for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
 }
-
-function cdl() {
-	cd "$1" && exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -al ;
+#			Replaces spaces with underscores
+function replspaces () {
+  echo $@ | sed 's/ /_/g'
 }
 
-function cdt1() {
-	cd "$1" && exa -T --level=1 ;
-}
-
-function cdt2() {
-	cd "$1" && exa -T --level=2 ;
-}
-
-function cdt3() {
-	cd "$1" && exa -T --level=3 ;
-}
-
-function lsa() {
-	ls -al "$@" ;
-}
-
-function ll() {
-	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fla "$@" ;
-}
-
-function lf() {
-	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fl "$@" ;
-}
-
-function l.() {
-	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fd .* "$@" ;
-}
+# function lsa() {
+# 	ls -al "$@";
+# }
+#
+# function ll() {
+# 	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fla "$@";
+# }
+#
+# function lf() {
+# 	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fl "$@";
+# }
+#
+# function l.() {
+# 	exa --icons --color=automatic --git --no-user --no-time -U --group-directories-first -Fd .* "$@";
+# }
 
 function del() {
 	mv "$@" ~/.Trash
 }
 
 function batt() {
-	pmset -g batt | grep -Eo "\d+%" ;
+	pmset -g batt | grep -Eo "\d+%";
 }
 
 function pa() {
 	find . -mindepth 2 -maxdepth 2 -name .git -print -execdir git pull \;
 }
 
-function weather () {
+function weather() {
 	curl -s "v2.wttr.in/rdu?format=1"
 }
 
-function flushdns () {
-	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder ;
+function flushdns() {
+	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder;
 }
 
-function restart () {
+function restart() {
 	shutdown -hr now
+}
+
+function versions() {
+  echo "+-------------------+------------+"
+  printf "| cli tool          | version    |\n"
+  echo "+-------------------+------------+"
+  brew list --formula --versions ansible awscli azure-cli circleci colima docker docker-compose gh git helm kind kops kubernetes-cli minikube node python terraform | awk '{printf "| \033[1;34m%-15s\033[0m --> \033[1;32m%-10s\033[0m |\n", $1, $NF}'
+  echo "+-------------------+------------+"
 }
