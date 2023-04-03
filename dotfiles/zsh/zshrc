@@ -1,33 +1,57 @@
+# History Configuration
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=10000
-############################################################################################
+
+# Sourced Files
 source ~/.zsh_aliases
-#			simple convenience functions file
-
-
-
 source ~/.zsh_functions
+
+# Completions
 autoload -U +X bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 source <(kubectl completion zsh)
-autoload -Uz zmv
-#			load version control information (vcs_config)
+
+# Advanced Functions
+fpath=(~/.zshfunc "${fpath[@]}")
+autoload -Uz $fpath[1]/*(.:t)
+
+# Load version control information
 autoload -Uz vcs_info
 precmd() {
 	vcs_info
 }
+
+# Load
+autoload -Uz zmv
 autoload -Uz colors && colors
 zmodload zsh/terminfo
 zmodload zsh/nearcolor
 zmodload -i zsh/complist
 zmodload zsh/zle
 
+# Optimize Completion
+typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+if [ $(date +'%j') != $updated_at ]; then
+  compinit -i
+else
+  compinit -C -i
+fi
 
+# Environment Variables
+export PATH=$PATH:~/Scripts
+export PATH="/usr/local/sbin:$PATH"
+#export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+#export DOCKER_HOST="unix:///var/run/docker.sock" # Default setting
+export WORKON_HOME=~/.virtualenvs
+export PROJECT_HOME=~/Devel
+export EDITOR="/usr/local/bin/bbedit -w --resume"
 
-#			custom advanced functions to autoload
-fpath=(~/.zshfunc "${fpath[@]}")
-autoload -Uz $fpath[1]/*(.:t)
+# Pyenv Initialization
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
 
 
 function bottom_prompt {
@@ -43,69 +67,30 @@ function bottom_prompt {
   tput rc
 }
 
-
-
-#			Cache completion if nothing changed - faster startup time
-typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
-if [ $(date +'%j') != $updated_at ]; then
-  compinit -i
-else
-  compinit -C -i
-fi
-############################################################################################
-export PATH=$PATH:~/Scripts
-export PATH="/usr/local/sbin:$PATH"
-#			set default Docker daemon socket from "unix:///var/run/docker.sock to Colima's location
-export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
-#			virtualenvwrapper things
-export WORKON_HOME=~/.virtualenvs
-export PROJECT_HOME=~/Devel
-export EDITOR="/usr/local/bin/bbedit -w --resume"
-#source $HOME/.pyenv/versions/$($VIRTUALENVWRAPPER_PYTHON -V 2>&1 | grep -Po '(?<=Python )(.+)')/bin/virtualenvwrapper.sh
-#
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
-#
+# Load FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-#
-############################################################################################
-#			the shell will automatically change directory if cd is not used
-setopt AUTO_CD
-#			record timestamp of command in HISTFILE
-setopt EXTENDED_HISTORY
-#			delete duplicates first when HISTFILE size exceeds HISTSIZE
-setopt HIST_EXPIRE_DUPS_FIRST
-#			ignore duplicated commands history list (may reenable after I have created functions for the most used commands)
-setopt HIST_IGNORE_DUPS
-#			ignore commands that start with space
-setopt HIST_IGNORE_SPACE
-#			show command with history expansion to user before running it
-setopt HIST_VERIFY
-#			append to history
-setopt APPEND_HISTORY
-#			add commands to HISTFILE in order of execution
-setopt INC_APPEND_HISTORY
-#			share history across multiple zsh sessions
-setopt SHARE_HISTORY
-#			removes blank lines from history
-setopt HIST_REDUCE_BLANKS
-#			zsh correction, correct corrects only commands
-setopt CORRECT
-#			zsh correct_all, corrects commands and arguments
-unsetopt CORRECT_ALL
-#			automatically list choices on ambiguous completion
-setopt AUTO_LIST
-#			automatically use menu completion
-setopt AUTO_MENU
-#			move cursor to end if word had one match
-setopt ALWAYS_TO_END
-#			do not display duplicates when searching history
-setopt HIST_FIND_NO_DUPS
-#			enables parameter expansion, command substitution
-setopt PROMPT_SUBST
-#			glob
-setopt EXTENDED_GLOB
+
+# Shell Options
+setopt AUTO_CD #the shell will automatically change directory if cd is not used
+setopt EXTENDED_HISTORY # record timestamp of command in HISTFILE
+setopt HIST_EXPIRE_DUPS_FIRST # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_IGNORE_DUPS # ignore duplicated commands history list (may reenable after I have created functions for the most used commands)
+setopt HIST_IGNORE_SPACE # ignore commands that start with space
+setopt HIST_VERIFY # show command with history expansion to user before running it
+setopt APPEND_HISTORY # append to history
+setopt INC_APPEND_HISTORY # add commands to HISTFILE in order of execution
+setopt SHARE_HISTORY # share history across multiple zsh sessions
+setopt HIST_REDUCE_BLANKS # removes blank lines from history
+setopt CORRECT # zsh correction, correct corrects only commands
+unsetopt CORRECT_
+unsetopt CORRECT_ALL # zsh correct_all, corrects commands and arguments
+setopt AUTO_LIST # automatically list choices on ambiguous completion
+setopt AUTO_MENU # automatically use menu completion
+setopt ALWAYS_TO_END # move cursor to end if word had one match
+setopt HIST_FIND_NO_DUPS # do not display duplicates when searching history
+setopt PROMPT_SUBST # enables parameter expansion, command substitution
+setopt EXTENDED_GLOB # glob
+
 ############################################################################################
 #			make the list prompt friendly
 zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
@@ -136,8 +121,10 @@ CUSR=$'%F{6}%n'
 CDIR=$'%F{2}%~'
 CGIT=$'%F{6}'
 CTIME=$'%F{6}[%F{2}%T%F{6}]'
-PS1='$(bottom_prompt)${BRKT1}╭ ${BRKT2}[$(batt_mtr_v2)${BRKT2}]${CTIME} ${CUSR}${CSYM}@${CHOST} ${CDIR}${CGIT}${vcs_info_msg_0_}
-${BRKT1}╰╴▷  %f'
+# PS1='$(bottom_prompt)${BRKT1}╭ ${BRKT2}[$(batt_mtr_v2)${BRKT2}]${CTIME} ${CUSR}${CSYM}@${CHOST} ${CDIR}${CGIT}${vcs_info_msg_0_}
+# ${BRKT1}╰╴▷  %f'
+PS1='${BRKT2}[$(batt_mtr_v2)${BRKT2}]${CTIME} ${CUSR}${CSYM}@${CHOST} ${CDIR}${CGIT}${vcs_info_msg_0_} %f'
+
 #PS2='(more) '
 #RPROMPT='${CGIT}${vcs_info_msg_0_:- }'
 #RPROMPT='$(weather)'
