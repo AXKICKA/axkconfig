@@ -94,17 +94,6 @@ function add-date() {
   }
 #			Capitalize each word of file name in a directory
 function zmvC() {
-<<<<<<< HEAD
-	zmv "$@" '(*).(*)' '${(C)1}.$2' ;
-}
-#			Change the extension to lower case
-function zmvExtL() {
-	zmv "$@" '(*).(*)' '$1.${(L)match[2]}' ;
-}
-#			Changes all filenames to lowercase in a directory
-function zmvL() {
-	zmv "$@" '(*).(*)' '${(L)1}.$2' ;
-=======
 	zmv "$@" '(*).(*)' '${(C)1}.$2';
 }
 #			Change the extension to lower case
@@ -114,7 +103,6 @@ function zmvExtL() {
 #			Changes all filenames to lowercase in a directory
 function zmvL() {
 	zmv "$@" '(*).(*)' '${(L)1}.$2';
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 }
 #			Change "-" to spaces filenames
 function zmvSp() {
@@ -135,33 +123,20 @@ function zmvEndSp() {
 #			Remove from start of filename
 function zmvFront() {
 	repl="$1"
-<<<<<<< HEAD
-#	echo "Enter beginning of filename to replace: "
-#	read repl
-	zmv "$@" "$repl (*)" '$1'
-=======
 #			echo "Enter beginning of filename to replace: "
 #			read repl
 	zmv "$@" "$repl (*)" '$1$2'
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 }
 #			Remove from end of filename
 function zmvEnd() {
 	repl="$1"
-<<<<<<< HEAD
-#	echo "Enter end of filename to replace: "
-#	read repl
-=======
 #			echo "Enter end of filename to replace: "
 #			read repl
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 	zmv "$@" "(*) $repl" '$1'
 }
 #			Remove {x} trailing digits before extension
 function zmvTdigit() {
 	zmv "$@" "(*) [0-9](#c8)(*)" '$1$2'
-<<<<<<< HEAD
-=======
 }
 
 function remove_digits() {
@@ -174,18 +149,13 @@ function zmvMp3Meta() {
  	zmv "$@" '(*).(mp3|m4a)' '$1${${(f)"$(exiftool -S -s -Title $2.$3)"}//[:\/]/_}.$3'
 # 	zmv "$@" '(**/)(*).(mp3|m4a)' '$1${${(f)"$(exiftool -S -s -Title $2.$3)"}//[:\/]/_}.$3'
 
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 }
 #			open man pages in Preview
 function preman() {
 	man -t "$@" | open -f -a "Preview";
 }
 function bbman() {
-<<<<<<< HEAD
-	MANWIDTH=80 MANPAGER='col -bx' man "$@" | bbedit --clean --view-top -t "man $@" ;
-=======
 	MANWIDTH=80 MANPAGER='col -bx' man "$@" | bbedit --clean --view-top -t "man $@";
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 }
 function xmanpage() {
 	open x-man-page://$@;
@@ -238,17 +208,11 @@ function weather() {
 }
 
 function flushdns() {
-<<<<<<< HEAD
-	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder ;
-=======
 	sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder;
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 }
 
 function restart() {
 	shutdown -hr now
-<<<<<<< HEAD
-=======
 }
 
 function versions() {
@@ -257,5 +221,4 @@ function versions() {
   echo "+-------------------+------------+"
   brew list --formula --versions ansible awscli azure-cli circleci colima docker docker-compose gh git helm kind kops kubernetes-cli minikube node python terraform | awk '{printf "| \033[1;34m%-15s\033[0m --> \033[1;32m%-10s\033[0m |\n", $1, $NF}'
   echo "+-------------------+------------+"
->>>>>>> 84cee2f7e8c803a2fab5dcb87057a3a2a21f5488
 }
